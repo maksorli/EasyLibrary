@@ -1,6 +1,6 @@
 # main.py
 
-from controllers import Library
+from controllers import Library, validate_int, validate_year
 from storage import JSONStorage
 
 
@@ -24,49 +24,36 @@ def main() -> None:
         if choice == "1":
             title = input("Введите название книги: ")
             author = input("Введите автора книги: ")
-            try:
-                year = int(input("Введите год издания: "))
-                if 0 < year < 2024:
-                    library.add_book(title=title, author=author, year=year)
-            except ValueError:
-                print("Год издания должен быть целым числом.")
+            year = validate_year(input("Введите год издания: "))
+            if year:
+                library.add_book(title=title, author=author, year=year)
 
         elif choice == "2":
-            try:
-                book_id = int(input("Введите ID книги для удаления: "))
-                if book_id is None:
-                    print("Нет книги с таким ID.")
-                else:
-                    library.delete_book(book_id=book_id)
-            except ValueError:
-                print("ID должен быть числом.")
+            book_id = validate_int(input("Введите ID книги для удаления: "))
+            library.delete_book(book_id=book_id)
 
         elif choice == "3":
             criteria_map = {
-                "1": "title",
-                "2": "author",
-                "3": "year",
+                1: "title",
+                2: "author",
+                3: "year",
             }
 
             print("По какому критерию искать книгу?")
             print("1. Название")
             print("2. Автор")
             print("3. Год издания")
-            search_choice = input("Введите номер критерия: ")
+            search_choice = validate_int(input("Введите номер критерия: "))
 
             if search_choice in criteria_map:
                 criterion = criteria_map[search_choice]
                 value = input(f"Введите {criterion}: ")
 
                 if criterion == "year":
-                    try:
-                        value = int(value)
-                    except ValueError:
-                        print("Год издания должен быть числом.")
-                        return
-                print(f"{criterion}: {value}")
+                    value = validate_year(value)
+
                 results = library.search_books(**{criterion: value})
-                print(results)
+
                 library.display_books(results)
             else:
                 print("Неверный выбор.")
@@ -75,24 +62,23 @@ def main() -> None:
             library.display_books()
 
         elif choice == "5":
-            try:
-                book_id = int(input("Введите ID книги: "))
-                status = input(
-                    "Введите новый статус:\n"
-                    "1. в наличии\n"
-                    "2. выдана\n"
-                    "Введите номер действия: "
-                )
-                library.change_status(book_id=book_id, status=status)
-            except ValueError:
-                print("ID должен быть числом.")
+
+            book_id = validate_int(input("Введите ID книги: "))
+            status = input(
+                "Введите новый статус:\n"
+                "1. в наличии\n"
+                "2. выдана\n"
+                "3. назад\n"
+                "Введите номер действия: "
+            )
+            library.change_status(book_id=book_id, status=status)
 
         elif choice == "6":
             print("Выход из программы.")
             break
 
         else:
-            print("Неверный выбор. Попробуйте снова.")
+            print("Неверный выбор. Попробуйте снова. Введите цело число от 1 до 6")
 
 
 if __name__ == "__main__":

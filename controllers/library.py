@@ -52,6 +52,8 @@ class Library:
 
         :param book_id: ID книги для удаления.
         """
+        if book_id is None:
+            return
         for book in self.books:
             if book.id == book_id:
                 self.books.remove(book)
@@ -68,7 +70,7 @@ class Library:
         :return: Список найденных книг.
         """
         results = self.books
-        print(kwargs)
+
         if "title" in kwargs:
             results = [
                 book
@@ -94,7 +96,13 @@ class Library:
         """
         for book in self.books:
             if book.id == book_id:
-                if status in {"1", "2"}:
+                if status in {"1", "2", "3"}:
+                    if status == "1":
+                        new_status = "в наличии"
+                    elif status == "2":
+                        new_status = "выдана"
+                    else:
+                        break
                     new_status = "в наличии" if status == "1" else "выдана"
                     book.status = new_status
                     self.storage.save(self.books)
@@ -102,7 +110,7 @@ class Library:
                 else:
                     print("Некорректный статус. Используйте '1' или '2'.")
                 return
-        print(f"Книга с ID {book_id} не найдена.")
+        # print(f"Книга с ID {book_id} не найдена.")
 
     def get_all_books(self) -> list[Book]:
         """
