@@ -42,26 +42,32 @@ def main() -> None:
                 print("ID должен быть числом.")
 
         elif choice == "3":
+            criteria_map = {
+                "1": "title",
+                "2": "author",
+                "3": "year",
+            }
+
             print("По какому критерию искать книгу?")
             print("1. Название")
             print("2. Автор")
             print("3. Год издания")
             search_choice = input("Введите номер критерия: ")
-            if search_choice == "1":
-                title = input("Введите название книги: ")
-                results = library.search_books(title=title)
+
+            if search_choice in criteria_map:
+                criterion = criteria_map[search_choice]
+                value = input(f"Введите {criterion}: ")
+
+                if criterion == "year":
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        print("Год издания должен быть числом.")
+                        return
+                print(f"{criterion}: {value}")
+                results = library.search_books(**{criterion: value})
+                print(results)
                 library.display_books(results)
-            elif search_choice == "2":
-                author = input("Введите автора книги: ")
-                results = library.search_books(author=author)
-                library.display_books(results)
-            elif search_choice == "3":
-                try:
-                    year = int(input("Введите год издания: "))
-                    results = library.search_books(year=year)
-                    library.display_books(results)
-                except ValueError:
-                    print("Год издания должен быть числом.")
             else:
                 print("Неверный выбор.")
 

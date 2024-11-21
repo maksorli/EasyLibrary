@@ -52,7 +52,13 @@ class Library:
 
         :param book_id: ID книги для удаления.
         """
-        pass
+        for book in self.books:
+            if book.id == book_id:
+                self.books.remove(book)
+                self.storage.save(self.books)
+                print(f"Книга с ID {book_id} удалена.")
+                return
+        print(f"Книга с ID {book_id} не найдена.")
 
     def search_books(self, **kwargs) -> list[Book]:
         """
@@ -61,7 +67,23 @@ class Library:
         :param kwargs: Критерии поиска (title, author, year).
         :return: Список найденных книг.
         """
-        pass
+        results = self.books
+        print(kwargs)
+        if "title" in kwargs:
+            results = [
+                book
+                for book in results
+                if kwargs["title"].lower() in book.title.lower()
+            ]
+        if "author" in kwargs:
+            results = [
+                book
+                for book in results
+                if kwargs["author"].lower() in book.author.lower()
+            ]
+        if "year" in kwargs:
+            results = [book for book in results if book.year == kwargs["year"]]
+        return results
 
     def change_status(self, book_id: int, status: str) -> None:
         """
@@ -72,14 +94,11 @@ class Library:
         """
         for book in self.books:
             if book.id == book_id:
-                if status == "1":
-                    book.status = "в наличии"
+                if status in {"1", "2"}:
+                    new_status = "в наличии" if status == "1" else "выдана"
+                    book.status = new_status
                     self.storage.save(self.books)
-                    print(f"Статус книги с ID {book_id} изменен на '{status}'.")
-                elif status == "2":
-                    book.status = "выдана"
-                    self.storage.save(self.books)
-                    print(f"Статус книги с ID {book_id} изменен на '{status}'.")
+                    print(f"Статус книги с ID {book_id} изменен на '{new_status}'.")
                 else:
                     print("Некорректный статус. Используйте '1' или '2'.")
                 return
@@ -94,4 +113,23 @@ class Library:
         return self.books
 
     def display_books(self, books: list[Book] = None) -> None:
-        pass
+        """
+        Выводит список книг.
+
+        :param books: Список книг для отображения. Если None, отображаются все книги.
+        """
+        if books is None:
+            books = self.books
+        if not books:
+            print("Книги не найдены.")
+            return
+        print(f"{'ID':<5}{'Название':<30}{'Автор':<20}{'Год':<10}{'Статус':<10}")
+        print("-" * 75)
+        for book in books:
+            print(
+                f"{book.id:<5}"
+                f"{book.title:<30}"
+                f"{book.author:<20}"
+                f"{book.year:<10}"
+                f"{book.status:<10}"
+            )
