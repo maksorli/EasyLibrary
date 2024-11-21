@@ -26,7 +26,7 @@ def main() -> None:
             author = input("Введите автора книги: ")
             try:
                 year = int(input("Введите год издания: "))
-                if  0 < year < 2024:
+                if 0 < year < 2024:
                     library.add_book(title=title, author=author, year=year)
             except ValueError:
                 print("Год издания должен быть целым числом.")
@@ -34,7 +34,7 @@ def main() -> None:
         elif choice == "2":
             try:
                 book_id = int(input("Введите ID книги для удаления: "))
-                if book_id == None:
+                if book_id is None:
                     print("Нет книги с таким ID.")
                 else:
                     library.delete_book(book_id=book_id)
@@ -71,7 +71,12 @@ def main() -> None:
         elif choice == "5":
             try:
                 book_id = int(input("Введите ID книги: "))
-                status = input("Введите новый статус: \n1. в наличии \n2. выдана\nВведите номер действия:")
+                status = input(
+                    "Введите новый статус:\n"
+                    "1. в наличии\n"
+                    "2. выдана\n"
+                    "Введите номер действия: "
+                )
                 library.change_status(book_id=book_id, status=status)
             except ValueError:
                 print("ID должен быть числом.")

@@ -1,6 +1,6 @@
 import json
 import os
- 
+
 from models import Book
 
 
@@ -49,5 +49,6 @@ class JSONStorage:
                     ensure_ascii=False,
                     indent=4,
                 )
+
         except Exception as e:
             print(f"Error while saving to file {self.file_path}: {e}")

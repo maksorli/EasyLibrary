@@ -1,6 +1,6 @@
-
-from storage import JSONStorage
 from models import Book
+from storage import JSONStorage
+
 
 class Library:
     """
@@ -75,5 +75,5 @@ class Library:
         """
         return self.books
 
-    def display_books(self, books:list[Book] = None) -> None:
+    def display_books(self, books: list[Book] = None) -> None:
         pass
