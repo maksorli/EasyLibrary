@@ -35,6 +35,11 @@ class Library:
         :param author: Автор книги.
         :param year: Год издания.
         """
+        for book in self.books:
+            if book.title == title and book.author == author and book.year == year:
+                print("Книга с таким названием, автором и годом уже существует.")
+                return
+
         book = Book(id=self.next_id, title=title, author=author, year=year)
         self.books.append(book)
         self.next_id += 1
@@ -65,7 +70,20 @@ class Library:
         :param book_id: ID книги.
         :param status: Новый статус ('в наличии' или 'выдана').
         """
-        pass
+        for book in self.books:
+            if book.id == book_id:
+                if status == "1":
+                    book.status = "в наличии"
+                    self.storage.save(self.books)
+                    print(f"Статус книги с ID {book_id} изменен на '{status}'.")
+                elif status == "2":
+                    book.status = "выдана"
+                    self.storage.save(self.books)
+                    print(f"Статус книги с ID {book_id} изменен на '{status}'.")
+                else:
+                    print("Некорректный статус. Используйте '1' или '2'.")
+                return
+        print(f"Книга с ID {book_id} не найдена.")
 
     def get_all_books(self) -> list[Book]:
         """
