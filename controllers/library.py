@@ -1,3 +1,5 @@
+from typing import Optional
+
 from models import Book
 from storage import JSONStorage
 
@@ -27,6 +29,18 @@ class Library:
             return max(book.id for book in self.books) + 1
         return 1
 
+    def find_book_by_id(self, book_id: int) -> Optional[Book]:
+        """
+        Ищет книгу по ID.
+
+        :param book_id: ID книги для поиска.
+        :return: Экземпляр Book, если найден, иначе None.
+        """
+        for book in self.books:
+            if book.id == book_id:
+                return book
+        return None
+
     def add_book(self, title: str, author: str, year: int) -> None:
         """
         Добавляет новую книгу в библиотеку.
@@ -54,13 +68,13 @@ class Library:
         """
         if book_id is None:
             return
-        for book in self.books:
-            if book.id == book_id:
-                self.books.remove(book)
-                self.storage.save(self.books)
-                print(f"Книга с ID {book_id} удалена.")
-                return
-        print(f"Книга с ID {book_id} не найдена.")
+        book = self.find_book_by_id(book_id)
+        if book:
+            self.books.remove(book)
+            self.storage.save(self.books)
+            print(f"Книга с ID {book_id} удалена.")
+        else:
+            print(f"Книга с ID {book_id} не найдена.")
 
     def search_books(self, **kwargs) -> list[Book]:
         """
@@ -84,41 +98,40 @@ class Library:
                 if kwargs["author"].lower() in book.author.lower()
             ]
         if "year" in kwargs:
-            results = [book for book in results if book.year == kwargs["year"]]
+
+            results = [book for book in results if book.year == int(kwargs["year"])]
+
         return results
 
-    def change_status(self, book_id: int, status: str) -> None:
+    def change_status(self, book: Book, status: str) -> None:
         """
         Изменяет статус книги.
 
-        :param book_id: ID книги.
+        :param book: инстанс книги.
         :param status: Новый статус ('в наличии' или 'выдана').
         """
-        for book in self.books:
-            if book.id == book_id:
-                if status in {"1", "2", "3"}:
-                    if status == "1":
-                        new_status = "в наличии"
-                    elif status == "2":
-                        new_status = "выдана"
-                    else:
-                        break
-                    new_status = "в наличии" if status == "1" else "выдана"
-                    book.status = new_status
-                    self.storage.save(self.books)
-                    print(f"Статус книги с ID {book_id} изменен на '{new_status}'.")
-                else:
-                    print("Некорректный статус. Используйте '1' или '2'.")
-                return
-        # print(f"Книга с ID {book_id} не найдена.")
 
-    def get_all_books(self) -> list[Book]:
-        """
-        Возвращает список всех книг в библиотеке.
+        if status == 1:
+            new_status = "в наличии"
+        elif status == 2:
+            new_status = "выдана"
+        elif status == 3:
+            print("Возврат в главное меню.")
+            return
+        else:
+            print("Некорректный статус. Используйте '1' или '2'.")
+            return
+        book.status = new_status
+        self.storage.save(self.books)
+        print(f"Статус книги с ID {book.id} изменен на '{new_status}'.")
 
-        :return: Список экземпляров класса Book.
-        """
-        return self.books
+    # def get_all_books(self) -> list[Book]:
+    #     """
+    #     Возвращает список всех книг в библиотеке.
+
+    #     :return: Список экземпляров класса Book.
+    #     """
+    #     return self.books
 
     def display_books(self, books: list[Book] = None) -> None:
         """
