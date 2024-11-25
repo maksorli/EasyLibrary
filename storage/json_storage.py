@@ -1,6 +1,7 @@
 import json
 import os
 
+from config import file_path
 from models import Book
 
 
@@ -9,7 +10,7 @@ class JSONStorage:
     Класс для работы с хранением данных в формате JSON.
     """
 
-    def __init__(self, file_path: str = "storage/library.json") -> None:
+    def __init__(self, file_path: str = file_path) -> None:
         """
         Инициализирует класс JSONStorage.
 

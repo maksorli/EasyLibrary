@@ -1,3 +1,8 @@
+min_year = 0
+max_year = 2024
+min_length = 2
+max_length = 100
+file_path = "storage/library.json"
 main_menu = [
     "Добавить книгу",
     "Удалить книгу",

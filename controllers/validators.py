@@ -1,5 +1,6 @@
 from typing import Any, Callable
 
+from config import max_length, max_year, min_length, min_year
 from exceptions import ExitException
 
 
@@ -61,7 +62,7 @@ def validate_int(
 
 
 @repeat_on_invalid
-def validate_year(year: str, min_year: int = 0, max_year: int = 2024) -> int:
+def validate_year(year: str, min_year: int = min_year, max_year: int = max_year) -> int:
     """
     Проверяет, что год находится в заданном диапазоне.
     Диапазон выбран для книг, написанных в нашей эре.
@@ -80,7 +81,10 @@ def validate_year(year: str, min_year: int = 0, max_year: int = 2024) -> int:
 
 @repeat_on_invalid
 def validate_string(
-    value: str, min_length: int = 2, max_length: int = 100, error_message: str = None
+    value: str,
+    min_length: int = min_length,
+    max_length: int = max_length,
+    error_message: str = None,
 ) -> str:
     """
     Проверяет, что строка имеет длину в заданном диапазоне.
