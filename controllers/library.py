@@ -83,6 +83,8 @@ class Library:
         :param kwargs: Критерии поиска (title, author, year).
         :return: Список найденных книг.
         """
+        from controllers.validators import validate_year
+
         results = self.books
 
         if "title" in kwargs:
@@ -98,8 +100,11 @@ class Library:
                 if kwargs["author"].lower() in book.author.lower()
             ]
         if "year" in kwargs:
-
-            results = [book for book in results if book.year == int(kwargs["year"])]
+            try:
+                value = validate_year(kwargs["year"])
+                results = [book for book in results if book.year == value]
+            except ValueError:
+                return None
 
         return results
 

@@ -2,6 +2,7 @@
 
 from config import main_menu, search_menu, status_menu
 from controllers import Library, validate_int, validate_string, validate_year
+from exceptions import ExitException
 from storage import JSONStorage
 from utils import show_menu
 
@@ -17,12 +18,13 @@ def main() -> None:
 
         choice = show_menu(main_menu)
         if choice == 1:
-
-            title = validate_string(input("Введите название книги: "))
-            author = validate_string(input("Введите автора книги: "))
-            year = validate_year(input("Введите год издания: "))
-            if year:
+            try:
+                title = validate_string(input("Введите название книги: "))
+                author = validate_string(input("Введите автора книги: "))
+                year = validate_year(input("Введите год издания: "))
                 library.add_book(title=title, author=author, year=year)
+            except ExitException:
+                continue  # Возвращаемся в главное меню
 
         elif choice == 2:
             try:
@@ -32,19 +34,21 @@ def main() -> None:
                 print(f"Ошибка: {e}")
 
         elif choice == 3:
-            print("\nВыберите критерий для поиска:")
-            criterion_index = show_menu([item[1] for item in search_menu])
-            criterion, display_name = search_menu[criterion_index - 1]
-            if criterion == "back":
-                print("Возврат в главное меню.")
-                continue
+            try:
+                print("\nВыберите критерий для поиска:")
+                criterion_index = show_menu([item[1] for item in search_menu])
+                criterion, display_name = search_menu[criterion_index - 1]
+                if criterion == "back":
+                    print("Возврат в главное меню.")
+                    continue
 
-            value = input(f"\nВведите запрос в поле {display_name}: ")
-            print(criterion, value)
-            results = library.search_books(**{criterion: value})
+                value = input(f"\nВведите запрос в поле {display_name}: ")
+                print(criterion, value)
+                results = library.search_books(**{criterion: value})
 
-            library.display_books(results)
-
+                library.display_books(results)
+            except ExitException:
+                continue  # Возвращаемся в главное меню
         elif choice == 4:
             library.display_books()
 
